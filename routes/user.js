@@ -14,7 +14,7 @@ const ipMiddleware = function(req, res, next) {
 };
 const { response } = require("express");
 const verifyJWT = (req, res, next) => {
-  const token = req.headers["x-access-token"];
+  const token = req.body.token;
   const starToken = req.headers["x-access-token"];
   // console.log('tooken',token);
   if (token == "null") {
@@ -35,7 +35,7 @@ const verifyJWT = (req, res, next) => {
 
 /* GET home page. */
 router.post("/", function (req, res) {
-  const token = req.headers["x-access-token"];
+  const token = req.body.token;
   console.log('tooken',token);
   if (token == 'null'){
     // res.send("Not logined");
@@ -50,7 +50,6 @@ router.post("/", function (req, res) {
         Helpers.getUser(req.body.userId).then((data) => {
           console.log("response", data);
           res.json(data);
-          res.send('ok')
         });
       }
     });
@@ -89,11 +88,14 @@ res.json({block:true})
     });
 });
 router.post("/createChannel", verifyJWT, (req, res) => {
-  console.log(req.body.data);
-  let data = req.body.data;
+  console.log(req.body);
+  console.log(req.files.channelImage);
+  const channelImage=req.files.channelImage
+  let data = req.body;
   data.userId = req.body.userId;
-  Helpers.createChannel(data)
+  Helpers.createChannel(req.body)
     .then((response) => {
+channelImage.mv("./public/ChannelImages/" + response._id + ".jpg")
       res.json({ response });
     })
     .catch(() => {
@@ -105,8 +107,6 @@ router.post("/upload-video", (req, res) => {
   let videoinformations = req.body;
   let video = req.files.file;
   let thumbanail = req.files.videothumbanail;
-  let ext = path.extname(thumbanail.name);
-  let extv = path.extname(video.name);
   videoHelpers.uploadVideo(videoinformations).then((response) => {
     video.mv("./public/Videos/" + response._id + ".mp4");
     thumbanail.mv("./public/Thumbanails/" + response._id + ".jpg");

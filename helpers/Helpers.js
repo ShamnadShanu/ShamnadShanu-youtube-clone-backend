@@ -223,6 +223,8 @@ module.exports = {
     });
   },
   createChannel: (data) => {
+    data.token=undefined
+    delete(data.token)
     return new Promise(async (resolve, reject) => {
       let exist = await db
         .get()
@@ -715,7 +717,10 @@ module.exports = {
             }
           }
         }
-        resolve({ result: result, channel: channel, subscribed: subscribed });
+        db.get().collection(collections.VIDEO_COLLECTION).find({channelName:channel.channelName}).toArray().then((count)=>{
+          console.log(count);
+          resolve({ result: result, channel: channel, subscribed: subscribed,count:count.length });
+        })
       } else {
         resolve([]);
       }
@@ -728,12 +733,20 @@ module.exports = {
         .collection(collections.CHANNEL_COLLOCTION)
         .findOne({ _id: objectId(channelId) })
         .then((response) => {
-          for (let i = 0; i < response.subscribers.length; i++) {
-            if (response.subscribers[i] == userId) {
-              subscribed = true;
+          if(response.subscribers){
+           if(userId){
+            for (let i = 0; i < response.subscribers.length; i++) {
+              if (response.subscribers[i] == userId) {
+                subscribed = true;
+              }
             }
+            resolve({ response: response, subscribed: subscribed });
+           }else{
+            resolve({response:response,subscribed:false})
+           }
+          }else{
+resolve({response:response,subscribed:false})
           }
-          resolve({ response: response, subscribed: subscribed });
         });
     });
   },

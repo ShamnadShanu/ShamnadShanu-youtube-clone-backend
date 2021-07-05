@@ -5,16 +5,13 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var db=require('./config/mongodb')
 var fileUpload=require('express-fileupload')
-let cors=require('cors')
+const cors=require('cors')
 const dotenv= require('dotenv').config()
-var adminRouter = require('./routes/admin')
+var adminRouter = require('./routes/admin');
 var userRouter = require('./routes/user');
 
 var app = express();
-
 // view engine setup
-
-
 // app.engine('hbs',hbs({extname:'hbs',defaultLayout:'layout',layoutsDir:__dirname+'/views/layout/',partialsDir:__dirname+'/views/partials/'}))
 app.use(logger('dev'));
 app.use(express.json());
