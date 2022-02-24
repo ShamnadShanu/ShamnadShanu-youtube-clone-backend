@@ -14,16 +14,13 @@ const ipMiddleware = function(req, res, next) {
 };
 const { response } = require("express");
 const verifyJWT = (req, res, next) => {
+  console.log(req.body);
   const token = req.body.token;
-  const starToken = req.headers["x-access-token"];
-  // console.log('tooken',token);
   if (token == "null") {
-    // res.send("Not authenticated");
     next()
   } else if (token) {
     jwt.verify(token, "secret", (err, decoded) => {
       if (err) {
-        // console.log(err);
         res.json({ auth: false, message: "Failed to authenticate" });
       } else {
         req.body.userId = decoded._id;
@@ -87,15 +84,19 @@ res.json({block:true})
       console.log("illa");
     });
 });
-router.post("/createChannel", verifyJWT, (req, res) => {
-  console.log(req.body);
-  console.log(req.files.channelImage);
-  const channelImage=req.files.channelImage
+router.post("/createChannel",verifyJWT,(req, res) => {
+  console.log(req.body,"kkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
+  if(req.files.channelImage){
+    var channelImage=req.files.channelImage
+  }
   let data = req.body;
   data.userId = req.body.userId;
   Helpers.createChannel(req.body)
     .then((response) => {
-channelImage.mv("./public/ChannelImages/" + response._id + ".jpg")
+      console.log('illa');
+      if(channelImage){
+        channelImage.mv("./public/ChannelImages/" + response._id + ".jpg")
+      }
       res.json({ response });
     })
     .catch(() => {

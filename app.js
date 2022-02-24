@@ -19,7 +19,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileUpload());
-app.use(cors())
+app.use(cors({
+  origin:['http://localhost:3000','https://youtube-clone-sepia-xi.vercel.app'],
+  methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH'],
+  allowedHeaders: ['Content-Type','Origin']
+}))
 db.connect((err)=>{
   console.log('connected successfully');
   })
