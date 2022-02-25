@@ -35,7 +35,7 @@ router.post("/", function (req, res) {
   const token = req.body.token;
   console.log('tooken',token);
   if (token == 'null'){
-    // res.send("Not logined");
+    console.log('no token');
   } else if (token) {
     jwt.verify(token, "secret", (err, decoded) => {
       if (err) {
